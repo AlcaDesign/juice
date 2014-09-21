@@ -1,0 +1,305 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Juice - fol-gtcl</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+
+<style>
+	
+	html,body {
+		margin: 0;
+		text-align: center;
+		font-family: 'Roboto Condensed', sans-serif;
+		font-weight: 700;
+		color: black;
+		/*text-shadow: 0 0 10px hsl(0, 0%, 0%);*/
+	}
+	table {
+		font-size: 24px;
+		max-width: 450px;
+		min-width: 450px;
+	}
+	
+	td {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	
+	#labels {
+		font-size: 16px;
+		line-height: .2em;
+		text-transform: uppercase;
+	}
+	
+	#det td {
+		height: 50px;
+		width: 75px;
+		font-size: 28px;
+	}
+	
+	
+	#goal {
+		position: relative;
+	}
+	
+	#concurrent {
+	}
+	
+	#lastfollower {
+		width: auto !important;
+	}
+	
+	#timers td {
+		padding: 0;
+		margin: 0;
+		line-height: 0;
+		text-align: left;
+	}
+	#timers td div {
+		display: inline-block;
+		width: 142px;
+	}
+	#timers td div div {
+		height: 10px;
+		background-color: #0088fd;
+		width: 100%;
+	}
+	#timers td div:not(:last-child) {
+		margin-right: 10px;
+	}
+	
+	
+	
+	
+	#note {
+		margin: 0 auto;
+		margin-top: 100px;
+		background-color: white;
+		color: black;
+		width: 600px;
+		padding: 15px 35px;
+		text-align: justify;
+		font-size: 18px;
+		font-weight: 400;
+	}
+	#note * {
+		font-family: 'Roboto Condensed', sans-serif;
+	}
+	p {
+		text-indent: 2em;
+	}
+	#note table {
+		min-width: 100%;
+	}
+	#note input {
+		padding: 2px 6px;
+		font-size: 16px;
+	}
+	#note input:not([type="submit"]) {
+		width: 95%;
+	}
+	
+</style>
+
+</head>
+
+<body>
+
+<div style="height: 20px"></div>
+
+<table>
+	
+	<tr id="labels">
+		
+		<td>Goal</td><td>Timer</td><td>Combo</td><td>Last Follower</td>
+		
+	</tr>
+	
+	<tr id="det">
+		
+		<td id="goal"><span id="current">0</span>/<span id="goalcount">25</span></td><td id="timer">03:00</td><td id="combo">0</td><td id="lastfollower"></td>
+		
+	</tr>
+	
+	<tr id="timers">
+		
+		<td colspan="4"><div><div></div></div><div><div></div></div><div><div></div></div></td>
+		
+	</tr>
+	
+</table>
+
+<div id="note">
+	
+	<h1>To modify the page:</h1>
+	
+	<p>There are several modifications you can easily make to this page. The way you can change it is with the form below or by directly modifying the URL. This URL can be pasted into CLR Browser for OBS to show your the page with your settings. If someone wants the code in a sort of watered-down API for their own page, I'd be happy to revisit. You can message me on Twitch or on Twitter, or fork me on Github @AlcaMagic. I'm always happy to help!</p>
+	<p>-Jacob "Alca" Foster</p>
+	
+	<form action="">
+		<table>
+			
+			<tr><td><label for="form-channel">Channel</label></td><td><input value="AlcaMagic" type="text" id="form-channel" name="channel"></td></tr>
+			<tr><td><label for="form-goal">Follower Goal</label></td><td><input value="25" type="number" id="form-goal" name="goal"></td></tr>
+			<tr><td><label for="form-offset">Goal Offset</label></td><td><input value="0" type="number" id="form-offset" name="offset"></td></tr>
+			<tr><td><label for="form-timer">Timer (seconds)</label></td><td><input value="180" type="number" id="form-timer" name="timer"></td></tr>
+			<tr><td><label for="form-font">Font (can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
+			<tr><td><label for="form-textcolor">Text Color (css)</label></td><td><input value="black" type="text" id="form-font" name="font"></td></tr>
+			<tr><td><label for="form-barcolor">Bar Color (css)</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor"></td></tr>
+			<tr><td><label for="form-green">Greenscreen background</label></td><td><input type="checkbox" id="form-green" name="green"></td></tr>
+			
+			<tr><td></td><td style="text-align: right"><input type="submit"></td></tr>
+			
+		</table>
+	</form>
+	
+</div>
+
+
+
+<script>
+	
+	var count = 0,
+		combo = 0,
+		intrvl = 1000*60*3; // Milliseconds
+		tStart = 0,
+		followCheckList = [],
+		followerLoop = setInterval(checkFollowers, 1000*5),
+		timerLook = setInterval(timerEvent, 1000/100),
+		lastFollows = {},
+		
+		timers = $('#timers td div div');
+	
+	locale = window.location.href.split('?');
+	if(locale.length > 1) {
+		query = locale[1].split('&');
+		function setting(w, e) {
+			if(w.slice(-1) != '=') w += '=';
+			if(e) return locale[1].indexOf(w) > -1;
+			else return locale[1].substr(locale[1].indexOf(w)).split('&')[0].split('=')[1];
+		}
+		if(setting('channel',true)) {
+			getChannels = setting('channel').split(',');
+			for(var i = 0; i < getChannels.length; i++) followCheckList[i] = getChannels[i].toLowerCase();
+			$('#form-channel').val(setting('channel'));
+		}
+		if(setting('goal',true)) {
+			$('#goalcount').text(setting('goal'));
+			$('#form-goal').val(setting('goal'));
+		}
+		if(setting('offset',true)) {
+			$('#goal span').first().text(parseInt(setting('offset')));
+			$('#form-offset').val(setting('offset'));
+		}
+		if(setting('timer',true)) {
+			intrvl = parseInt(setting('timer'))*1000;
+			$('#form-timer').val(setting('timer'));
+		}
+		if(setting('font',true)) {
+			$('body').css('font-family', decodeURIComponent(setting('font')).split('+').join(' '));
+			$('#form-font').val(decodeURIComponent(setting('font')).split('+').join(' '));
+		}
+		if(setting('textcolor',true)) {
+			$('body').css('color', decodeURIComponent(setting('textcolor')).split('+').join(' '));
+			$('#form-textcolor').val(decodeURIComponent(setting('textcolor')).split('+').join(' '));
+		}
+		if(setting('barcolor',true)) {
+			$('#timers td div div').css('background-color', decodeURIComponent(setting('barcolor')).split('+').join(' '));
+			$('#form-barcolor').val(decodeURIComponent(setting('barcolor')).split('+').join(' '));
+		}
+		if(setting('green',true)) {
+			$('html,body').css('background-color', 'hsl(120,100%,50%)');
+			$('#form-green').attr('checked', 'checked');
+		}
+	}
+
+	
+	function resetTimer() {
+		
+	}
+	
+	function adjustCount() {
+		count++; combo++;
+		tStart = +new Date;
+		$('#goal span').first().text(count);
+		$('#combo').text(combo);
+		
+	}
+	
+	function checkFollowers() {
+		var getLastFollowers = 25;
+		for(var i = 0; i < followCheckList.length; i++) {
+			$.getJSON('https://api.twitch.tv/kraken/channels/' + followCheckList[i] + '/follows?callback=?', { limit: getLastFollowers, client_id: 's2qbc7xp3934tybnxx3s00dcio17tam' })
+				.done(function(data) {
+						if(!!data.follows) {
+							var channel = this.url.split('/')[5];
+							
+							if(!lastFollows.hasOwnProperty(channel)) lastFollows[channel] = {fol:[],count:0, startcount:0};
+							
+							var followers = [];
+							for(var k = 0; k < data.follows.length; k++) {
+								followers.push(data.follows[k].user.display_name);
+							}
+							if(lastFollows[channel].fol.length > 0) {
+								var difference = [];
+								jQuery.grep(followers, function(el) {
+										if(jQuery.inArray(el, lastFollows[channel].fol) == -1) {
+											difference.push(el);
+											lastFollows[channel].fol.push(el);
+											adjustCount(true);
+										}
+									});
+								/*if(difference.length > 0)*/ $('#lastfollower').text(followers[0]);
+							}
+							else {
+								lastFollows[channel].fol = followers;
+								$('#lastfollower').text(followers[0]);
+								lastFollows[channel].startcount = data._total;
+							}
+							lastFollows[channel].count = data._total;
+						}
+						else console.log(data);
+						
+					});
+		}
+	}
+	
+	function timerEvent() {
+		
+		
+		var tDiff = tStart > 0 ? new Date - tStart : 0,
+			tDiffOpp = intrvl-tDiff;
+			int = intrvl/timers.length,
+			empty = Math.floor(tDiff/int);
+		
+		function pad(s) { return s < 10 ? '0' + s : s; }
+		function pad3(s) {
+			s += '';
+			s = s.split('.');
+			s = s[s.length-1];
+			if(s.length >= 3) return s.substr(0,3);
+			else return pad3( s + '0' );
+		}
+		
+		if(tDiffOpp <= 0) {
+			tDiffOpp = 0;
+			combo = 0;
+			tStart = 0;
+			
+		}
+		$('#combo').text(combo);
+		$('#timer').text(Math.floor(tDiffOpp/1000/60) + ':' + pad(Math.floor(tDiffOpp/1000%60)));
+		
+		timers.css('width', '100%');
+		for(var i = 0; i < empty; i++) {
+			timers.parent().filter(':nth-last-child('+(i+1)+')').children().css('width', '0%');
+		}
+		timers.parent().filter(':nth-last-child('+(i+1)+')').children().css('width', (1-tDiff%int/int)*100+'%');
+	}
+	
+</script>
+</body>
+</html>
