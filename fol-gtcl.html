@@ -141,13 +141,17 @@
 	<form action="">
 		<table>
 			
+			<tr><td style="font-weight: bold; position: relative; left: -20px">App:</td></tr>
 			<tr><td><label for="form-channel">Channel</label></td><td><input value="AlcaMagic" type="text" id="form-channel" name="channel"></td></tr>
+			<tr><td><label for="form-interval">Check Interval (seconds)</label></td><td><input value="5" type="number" id="form-interval" name="interval"></td></tr>
 			<tr><td><label for="form-goal">Follower Goal</label></td><td><input value="25" type="number" id="form-goal" name="goal"></td></tr>
 			<tr><td><label for="form-offset">Goal Offset</label></td><td><input value="0" type="number" id="form-offset" name="offset"></td></tr>
-			<tr><td><label for="form-timer">Timer (seconds)</label></td><td><input value="180" type="number" id="form-timer" name="timer"></td></tr>
-			<tr><td><label for="form-font">Font (can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
-			<tr><td><label for="form-textcolor">Text Color (css)</label></td><td><input value="black" type="text" id="form-font" name="font"></td></tr>
-			<tr><td><label for="form-barcolor">Bar Color (css)</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor"></td></tr>
+			<tr><td><label for="form-timer">Countdown (seconds)</label></td><td><input value="180" type="number" id="form-timer" name="timer"></td></tr>
+			<tr><td style="font-weight: bold; position: relative; left: -20px">CSS:</td></tr>
+			<tr><td><label for="form-font">Font(can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
+			<tr><td><label for="form-fontweight">Font-weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
+			<tr><td><label for="form-textcolor">Text Color</label></td><td><input value="black" type="text" id="form-font" name="font"></td></tr>
+			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor"></td></tr>
 			<tr><td><label for="form-green">Greenscreen background</label></td><td><input type="checkbox" id="form-green" name="green"></td></tr>
 			
 			<tr><td></td><td style="text-align: right"><input type="submit"></td></tr>
@@ -165,12 +169,14 @@
 		combo = 0,
 		intrvl = 1000*60*3; // Milliseconds
 		tStart = 0,
-		followCheckList = [],
+		followCheckList = ['alcamagic'],
 		followerLoop = setInterval(checkFollowers, 1000*5),
 		timerLook = setInterval(timerEvent, 1000/100),
 		lastFollows = {},
 		
 		timers = $('#timers td div div');
+	
+	checkFollowers();
 	
 	locale = window.location.href.split('?');
 	if(locale.length > 1) {
@@ -184,6 +190,11 @@
 			getChannels = setting('channel').split(',');
 			for(var i = 0; i < getChannels.length; i++) followCheckList[i] = getChannels[i].toLowerCase();
 			$('#form-channel').val(setting('channel'));
+		}
+		if(setting('interval',true)) {
+			$('#form-interval').val(setting('interval'));
+			clearInterval(followerLoop);
+			followerLoop = setInterval(checkFollowers, parseInt(setting('interval'))*1000);
 		}
 		if(setting('goal',true)) {
 			$('#goalcount').text(setting('goal'));
@@ -200,6 +211,10 @@
 		if(setting('font',true)) {
 			$('body').css('font-family', decodeURIComponent(setting('font')).split('+').join(' '));
 			$('#form-font').val(decodeURIComponent(setting('font')).split('+').join(' '));
+		}
+		if(setting('fontweight',true)) {
+			$('body').css('font-weight', setting('fontweight'));
+			$('#form-fontweight').val(setting('fontweight'));
 		}
 		if(setting('textcolor',true)) {
 			$('body').css('color', decodeURIComponent(setting('textcolor')).split('+').join(' '));
