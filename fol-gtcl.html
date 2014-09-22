@@ -209,6 +209,7 @@
 		if(setting('offset',true)) {
 			$('#goal span').first().text(parseInt(setting('offset')));
 			$('#form-offset').val(setting('offset'));
+			count = parseInt(setting('offset'));
 		}
 		if(setting('timer',true)) {
 			intrvl = parseInt(setting('timer'))*1000;
