@@ -28,6 +28,10 @@
 		padding-right: 0;
 	}
 	
+	#thing {
+		margin-top: 15px;
+	}
+	
 	#labels {
 		font-size: 16px;
 		line-height: .2em;
@@ -108,7 +112,7 @@
 
 <body>
 
-<table style="margin-top: 15px;">
+<table style="-webkit-text-stroke: 0px transparent;" id="thing">
 	
 	<tr id="labels">
 		
@@ -151,6 +155,8 @@
 			<tr><td><label for="form-font">Font(can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
 			<tr><td><label for="form-fontweight">Font-weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
 			<tr><td><label for="form-textcolor">Text Color</label></td><td><input value="black" type="text" id="form-textcolor" name="textcolor"></td></tr>
+			<tr><td><label for="form-textstrokethickness">Text Stoke Thickness (px)</label></td><td><input value="0" type="number" id="form-textstrokethickness" name="textstrokethickness"></td></tr>
+			<tr><td><label for="form-textstrokecolor">Text Stroke Color</label></td><td><input value="transparent" type="text" id="form-textstrokecolor" name="textstrokecolor"></td></tr>
 			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor"></td></tr>
 			<tr><td><label for="form-green">Greenscreen background</label></td><td><input type="checkbox" id="form-green" name="green"></td></tr>
 			
@@ -216,6 +222,20 @@
 			$('body').css('font-weight', setting('fontweight'));
 			$('#form-fontweight').val(setting('fontweight'));
 		}
+		var stroke = []; //'-webkit-text-stroke: 0px transparent;';
+		if(setting('textstrokethickness',true)) {
+			stroke[0] = (decodeURIComponent(setting('textstrokethickness')));
+			$('#form-textstrokethickness').val(decodeURIComponent(setting('textstrokethickness')));
+		}
+		else stroke[0] = 0;
+		if(setting('textstrokecolor',true)) {
+			stroke[1] = (decodeURIComponent(setting('textstrokecolor')));
+			$('#form-textstrokecolor').val(decodeURIComponent(setting('textstrokecolor')));
+		}
+		else stroke[1] = 'transparent';
+		
+		$('#thing').attr('style', '-webkit-text-stroke: ' + stroke.join('px '));
+		
 		if(setting('textcolor',true)) {
 			$('body').css('color', decodeURIComponent(setting('textcolor')).split('+').join(' '));
 			$('#form-textcolor').val(decodeURIComponent(setting('textcolor')).split('+').join(' '));
