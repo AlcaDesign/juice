@@ -36,12 +36,14 @@
 		font-size: 16px;
 		line-height: .2em;
 		text-transform: uppercase;
+		color: dimgrey;
 	}
 	
 	#det td {
 		height: 50px;
 		width: 75px;
 		font-size: 28px;
+		color: black;
 	}
 	
 	
@@ -102,8 +104,22 @@
 		padding: 2px 6px;
 		font-size: 16px;
 	}
-	#note input:not([type="submit"]) {
+	#note input:not([type="submit"]):not(.color) {
 		width: 95%;
+	}
+	#note input.color {
+		width: 81.7%%;
+	}
+	
+	.colordisplay {
+		width: 29px;
+		height: 29px;
+		display: inline-block;
+		position: relative;
+		top: 8px;
+		left: 4px;
+		border: 1px solid hsl(0, 0%, 65%);
+		box-sizing: border-box;
 	}
 	
 </style>
@@ -154,10 +170,11 @@
 			<tr><td style="font-weight: bold; position: relative; left: -20px">CSS:</td></tr>
 			<tr><td><label for="form-font">Font(can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
 			<tr><td><label for="form-fontweight">Font-weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
-			<tr><td><label for="form-textcolor">Text Color</label></td><td><input value="black" type="text" id="form-textcolor" name="textcolor"></td></tr>
+			<tr><td><label for="form-textcolortitles">Text Color - Titles ('goal', etc.)</label></td><td><input value="dimgrey" type="text" id="form-textcolortitles" name="textcolortitles" class="color"></td></tr>
+			<tr><td><label for="form-textcolorvalues">Text Color - Values ('0/25', etc.)</label></td><td><input value="black" type="text" id="form-textcolorvalues" name="textcolorvalues" class="color"></td></tr>
 			<tr><td><label for="form-textstrokethickness">Text Stoke Thickness (px)</label></td><td><input value="0" type="number" id="form-textstrokethickness" name="textstrokethickness"></td></tr>
-			<tr><td><label for="form-textstrokecolor">Text Stroke Color</label></td><td><input value="transparent" type="text" id="form-textstrokecolor" name="textstrokecolor"></td></tr>
-			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor"></td></tr>
+			<tr><td><label for="form-textstrokecolor">Text Stroke Color</label></td><td><input value="transparent" type="text" id="form-textstrokecolor" name="textstrokecolor" class="color"></td></tr>
+			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor" class="color"></td></tr>
 			<tr><td><label for="form-green">Greenscreen background</label></td><td><input type="checkbox" id="form-green" name="green"></td></tr>
 			
 			<tr><td></td><td style="text-align: right"><input type="submit" value="Apply"></td></tr>
@@ -181,8 +198,6 @@
 		lastFollows = {},
 		
 		timers = $('#timers td div div');
-	
-	checkFollowers();
 	
 	locale = window.location.href.split('?');
 	if(locale.length > 1) {
@@ -223,6 +238,14 @@
 			$('body').css('font-weight', setting('fontweight'));
 			$('#form-fontweight').val(setting('fontweight'));
 		}
+		if(setting('textcolortitles',true)) {
+			$('#labels').css('color', decodeURIComponent(setting('textcolortitles')).split('+').join(' '));
+			$('#form-textcolortitles').val(decodeURIComponent(setting('textcolortitles')).split('+').join(' '));
+		}
+		if(setting('textcolorvalues',true)) {
+			$('#det td').css('color', decodeURIComponent(setting('textcolorvalues')).split('+').join(' '));
+			$('#form-textcolorvalues').val(decodeURIComponent(setting('textcolorvalues')).split('+').join(' '));
+		}
 		var stroke = []; //'-webkit-text-stroke: 0px transparent;';
 		if(setting('textstrokethickness',true)) {
 			stroke[0] = (decodeURIComponent(setting('textstrokethickness')));
@@ -250,6 +273,18 @@
 			$('#form-green').attr('checked', 'checked');
 		}
 	}
+	
+	function updateColorDisplays() {
+		console.log($(this));
+		$('.color').parent().children('.colordisplay').each(function(index, element) {
+				$(element).css('background-color', $(element).prev().val());
+			});
+	}
+	
+	$('.color').parent().append('<div class="colordisplay"></div>').change(updateColorDisplays).keydown(updateColorDisplays).keypress(updateColorDisplays).keyup(updateColorDisplays).click(updateColorDisplays);
+	updateColorDisplays();
+	
+	checkFollowers();
 
 	
 	function resetTimer() {
