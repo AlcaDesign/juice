@@ -111,6 +111,11 @@
 		width: 81.7%%;
 	}
 	
+	.indent {
+		position: relative;
+		left: 30px;
+	}
+	
 	.colordisplay {
 		width: 29px;
 		height: 29px;
@@ -170,8 +175,9 @@
 			<tr><td style="font-weight: bold; position: relative; left: -20px">CSS:</td></tr>
 			<tr><td><label for="form-font">Font(can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
 			<tr><td><label for="form-fontweight">Font-weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
-			<tr><td><label for="form-textcolortitles">Text Color - Titles ('goal', etc.)</label></td><td><input value="dimgrey" type="text" id="form-textcolortitles" name="textcolortitles" class="color"></td></tr>
-			<tr><td><label for="form-textcolorvalues">Text Color - Values ('0/25', etc.)</label></td><td><input value="black" type="text" id="form-textcolorvalues" name="textcolorvalues" class="color"></td></tr>
+			<tr><td><label for="form-textcolor">Text Color - Both</label></td><td><input value="white" type="text" id="form-textcolor" name="textcolor" class="color"></td></tr>
+			<tr><td class="indent"><label for="form-textcolortitles">Text Color - Titles ('goal', etc.)</label></td><td><input value="white" type="text" id="form-textcolortitles" name="textcolortitles" class="color"></td></tr>
+			<tr><td class="indent"><label for="form-textcolorvalues">Text Color - Values ('0/25', etc.)</label></td><td><input value="white" type="text" id="form-textcolorvalues" name="textcolorvalues" class="color"></td></tr>
 			<tr><td><label for="form-textstrokethickness">Text Stoke Thickness (px)</label></td><td><input value="0" type="number" id="form-textstrokethickness" name="textstrokethickness"></td></tr>
 			<tr><td><label for="form-textstrokecolor">Text Stroke Color</label></td><td><input value="transparent" type="text" id="form-textstrokecolor" name="textstrokecolor" class="color"></td></tr>
 			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor" class="color"></td></tr>
@@ -207,37 +213,69 @@
 			if(e) return locale[1].indexOf(w) > -1;
 			else return locale[1].substr(locale[1].indexOf(w)).split('&')[0].split('=')[1];
 		}
+		
+		
+		/////////////////// CHANNEL ////////////////////////////////////////////
+		
 		if(setting('channel',true)) {
 			getChannels = setting('channel').split(',');
 			for(var i = 0; i < getChannels.length; i++) followCheckList[i] = getChannels[i].toLowerCase();
 			$('#form-channel').val(setting('channel'));
 		}
+		
+		
+		/////////////////// INTERVAL ////////////////////////////////////////////
+		
 		if(setting('interval',true)) {
 			$('#form-interval').val(setting('interval'));
 			clearInterval(followerLoop);
 			followerLoop = setInterval(checkFollowers, parseInt(setting('interval'))*1000);
 		}
+		
+		
+		/////////////////// GOAL ////////////////////////////////////////////
+		
 		if(setting('goal',true)) {
 			$('#goalcount').text(setting('goal'));
 			$('#form-goal').val(setting('goal'));
 		}
+		
+		
+		/////////////////// OFFSET ////////////////////////////////////////////
+		
 		if(setting('offset',true)) {
 			$('#goal span').first().text(parseInt(setting('offset')));
 			$('#form-offset').val(setting('offset'));
 			count = parseInt(setting('offset'));
 		}
+		
+		
+		/////////////////// TIMER ////////////////////////////////////////////
+		
 		if(setting('timer',true)) {
 			intrvl = parseInt(setting('timer'))*1000;
 			$('#form-timer').val(setting('timer'));
 		}
+		
+		
+		/////////////////// FONT ////////////////////////////////////////////
+		
 		if(setting('font',true)) {
 			$('body').css('font-family', decodeURIComponent(setting('font')).split('+').join(' '));
 			$('#form-font').val(decodeURIComponent(setting('font')).split('+').join(' '));
 		}
+		
+		
+		/////////////////// FONT-WEIGHT ////////////////////////////////////////////
+		
 		if(setting('fontweight',true)) {
 			$('body').css('font-weight', setting('fontweight'));
 			$('#form-fontweight').val(setting('fontweight'));
 		}
+		
+		
+		/////////////////// TEXTCOLOR ////////////////////////////////////////////
+		
 		if(setting('textcolortitles',true)) {
 			$('#labels').css('color', decodeURIComponent(setting('textcolortitles')).split('+').join(' '));
 			$('#form-textcolortitles').val(decodeURIComponent(setting('textcolortitles')).split('+').join(' '));
@@ -246,6 +284,14 @@
 			$('#det td').css('color', decodeURIComponent(setting('textcolorvalues')).split('+').join(' '));
 			$('#form-textcolorvalues').val(decodeURIComponent(setting('textcolorvalues')).split('+').join(' '));
 		}
+		if(setting('textcolor',true)) {
+			$('body').css('color', decodeURIComponent(setting('textcolor')).split('+').join(' '));
+			$('#form-textcolor').val(decodeURIComponent(setting('textcolor')).split('+').join(' '));
+		}
+		
+		
+		/////////////////// STROKE ////////////////////////////////////////////
+		
 		var stroke = []; //'-webkit-text-stroke: 0px transparent;';
 		if(setting('textstrokethickness',true)) {
 			stroke[0] = (decodeURIComponent(setting('textstrokethickness')));
@@ -260,14 +306,17 @@
 		
 		$('#thing').attr('style', '-webkit-text-stroke: ' + stroke.join('px '));
 		
-		if(setting('textcolor',true)) {
-			$('body').css('color', decodeURIComponent(setting('textcolor')).split('+').join(' '));
-			$('#form-textcolor').val(decodeURIComponent(setting('textcolor')).split('+').join(' '));
-		}
+		
+		/////////////////// BAR COLOR ////////////////////////////////////////////
+		
 		if(setting('barcolor',true)) {
 			$('#timers td div div').css('background-color', decodeURIComponent(setting('barcolor')).split('+').join(' '));
 			$('#form-barcolor').val(decodeURIComponent(setting('barcolor')).split('+').join(' '));
 		}
+		
+		
+		/////////////////// GREENSCREEN ////////////////////////////////////////////
+		
 		if(setting('green',true)) {
 			$('html,body').css('background-color', 'hsl(120,100%,50%)');
 			$('#form-green').attr('checked', 'checked');
@@ -275,14 +324,26 @@
 	}
 	
 	function updateColorDisplays() {
-		console.log($(this));
 		$('.color').parent().children('.colordisplay').each(function(index, element) {
 				$(element).css('background-color', $(element).prev().val());
 			});
+		
+	}
+	function updateBothColors() {
+		var val = $('#form-textcolor').val();
+		
+		$('#form-textcolor').parent().children('.colordisplay').css('background-color', val);
+		
+		$('#form-textcolortitles, #form-textcolorvalues').val(val);
+		
+		updateColorDisplays();
 	}
 	
 	$('.color').parent().append('<div class="colordisplay"></div>').change(updateColorDisplays).keydown(updateColorDisplays).keypress(updateColorDisplays).keyup(updateColorDisplays).click(updateColorDisplays);
 	updateColorDisplays();
+	
+	$('#form-textcolor').change(updateBothColors).keydown(updateBothColors).keypress(updateBothColors).keyup(updateBothColors).click(updateBothColors);
+	updateBothColors();
 	
 	checkFollowers();
 
