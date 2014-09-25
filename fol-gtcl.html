@@ -124,6 +124,14 @@
 		border: 1px solid hsl(0, 0%, 65%);
 		box-sizing: border-box;
 	}
+	.description > td {
+		font-size: 16px;
+		width: 250px;
+		padding-bottom: 10px;
+		position: relative;
+		left: 15px;
+		display: block;
+	}
 	
 </style>
 
@@ -159,27 +167,51 @@
 	
 	<p>There are several modifications you can easily make to this page. The way you can change it is with the form below or by directly modifying the URL. This URL can be pasted into CLR Browser for OBS to show your the page with your settings. If someone wants the code in a sort of watered-down API for their own page, I'd be happy to revisit. You can message me on Twitch or on Twitter, or fork me on Github @AlcaMagic. I'm always happy to help!</p>
 	<p>-Jacob "Alca" Foster</p><br>
-	<p>The recommended capture size or CLR Browser size is 475px wide by 100px tall.</p>
+	<p>The recommended capture size or CLR Browser size is 475px wide by 100px tall. Be sure to press "enter" or click the "Apply" button when you're done modifying these options.</p>
 	
 	<form action="">
 		<table>
 			
 			<tr><td style="font-weight: bold; position: relative; left: -20px">App:</td></tr>
 			<tr><td><label for="form-channel">Channel</label></td><td><input value="AlcaMagic" type="text" id="form-channel" name="channel"></td></tr>
+			<tr class="description"><td>This is your channel name.</td></tr>
+			
 			<tr><td><label for="form-interval">Check Interval (seconds)</label></td><td><input value="5" type="number" id="form-interval" name="interval"></td></tr>
+			<tr class="description"><td>How often you want to check for new followers in seconds.</td></tr>
+			
 			<tr><td><label for="form-goal">Follower Goal</label></td><td><input value="25" type="number" id="form-goal" name="goal"></td></tr>
+			<tr class="description"><td>The goal for followers. This is the value after the slash.</td></tr>
+			
 			<tr><td><label for="form-offset">Count Offset</label></td><td><input value="0" type="number" id="form-offset" name="offset"></td></tr>
+			<tr class="description"><td>Start off at a specific count or for when you had to restart the stream.</td></tr>
+			
 			<tr><td><label for="form-timer">Countdown (seconds)</label></td><td><input value="180" type="number" id="form-timer" name="timer"></td></tr>
+			<tr class="description"><td>Time in seconds to countdown after someone follows for the combo train.</td></tr>
+			
 			<tr><td style="font-weight: bold; position: relative; left: -20px">CSS:</td></tr>
-			<tr><td><label for="form-font">Font(can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
-			<tr><td><label for="form-fontweight">Font-weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
+			<tr><td><label for="form-font">Font (can be local)</label></td><td><input value="'Roboto Condensed'" type="text" id="form-font" name="font"></td></tr>
+			<tr class="description"><td>The font name you'd like. This is a finicky value for local files. If you're having trouble setting this, I <a href="http://cssfontstack.com/">suggest looking at this site</a> for fonts.</td></tr>
+			
+			<tr><td><label for="form-fontweight">Font weight</label></td><td><input value="bold" type="text" id="form-fontweight" name="fontweight"></td></tr>
+			<tr class="description"><td>The thickness of the font like "normal", "bold", "lighter." This can be 100 through 900 at intervals of 100 (100, 200, 300, etc.). You can use <a href="http://www.google.com/fonts/specimen/Roboto">this page</a> as a reference for what cooresponds.</td></tr>
+			
 			<tr><td><label for="form-textcolor">Text Color - Both</label></td><td><input value="black" type="text" id="form-textcolor" name="textcolor" class="color"></td></tr>
 			<tr><td class="indent"><img src="images/fol-gtcl/associationbargraphic.png" style="position: absolute; top: 0px; left: -25px"><label for="form-textcolortitles">Text Color - Titles ('goal', etc.)</label></td><td><input value="black" type="text" id="form-textcolortitles" name="textcolortitles" class="color"></td></tr>
 			<tr><td class="indent"><label for="form-textcolorvalues">Text Color - Values ('0/25', etc.)</label></td><td><input value="black" type="text" id="form-textcolorvalues" name="textcolorvalues" class="color"></td></tr>
+			<tr class="description"><td>The desired text color. Changing "both" will update the other two. This can be words like "white", "darkgrey", "blue", etc., hsl, rgb, or anything else that CSS will take. </td></tr>
+			
 			<tr><td><label for="form-textstrokethickness">Text Stoke Thickness (px)</label></td><td><input value="0" type="number" id="form-textstrokethickness" name="textstrokethickness"></td></tr>
+			<tr class="description"><td>The stroke thickness. it is not recommended to set this higher than 1 or 2 as it will cover the text. This is a good option as it helps define and contrast the text.</td></tr>
+			
 			<tr><td><label for="form-textstrokecolor">Text Stroke Color</label></td><td><input value="transparent" type="text" id="form-textstrokecolor" name="textstrokecolor" class="color"></td></tr>
+			<tr class="description"><td>Should be contrasting with the text color. If the text color is white then use black.</td></tr>
+			
 			<tr><td><label for="form-barcolor">Bar Color</label></td><td><input value="#0088fd" type="text" id="form-barcolor" name="barcolor" class="color"></td></tr>
+			<tr class="description"><td>The color of the horizontal bars under the values. Setting this to "transparent" will hide it, but you can simply crop it out by setting the height to 75px.</td></tr>
+			
 			<tr><td><label for="form-green">Greenscreen background</label></td><td><input type="checkbox" id="form-green" name="green"></td></tr>
+			<tr class="description"><td>Use this if you're unable to use CLR Browser or similar and need to use color keying.</td></tr>
+			
 			
 			<tr><td></td><td style="text-align: right"><input type="submit" value="Apply"></td></tr>
 			
